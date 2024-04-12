@@ -1,0 +1,10 @@
+[target.riscv32imc-unknown-none-elf]
+rustflags = [
+    "-C", "link-arg=-Tld/DEMOSYSTEM_FLASH.ld",
+    "-C", "opt-level=0",
+    "-C", "target-feature=-c,+zicsr,+zifencei",
+    "-C", "debuginfo=0" 
+]
+
+[build]
+target = "riscv32imc-unknown-none-elf"
