@@ -33,8 +33,4 @@ pub extern "C" fn main() {
 
     gpio.set_output(s);
     
-    
-
-    gpio.set_output(10);
-    
 }

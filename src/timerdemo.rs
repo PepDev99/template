@@ -69,5 +69,4 @@ pub extern "C" fn main() {
     timer.timer_disable();
     serial.puts("timer disabled\n");
 
-
 }

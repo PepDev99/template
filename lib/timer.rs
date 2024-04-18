@@ -4,8 +4,6 @@ use core::arch::asm;
 
 use crate::interrupt::{enable_interrupts, install_exception_handler, set_global_interrupt_enable};
 
-use super::uart::{Uart, UART0_BASE};
-
 pub (crate) const TIMER_BASE: *mut u32 = 0x80002000 as *mut u32;
 
 const TIMER_IRQ : u32 = 1 << 7;
@@ -106,8 +104,6 @@ impl Timer {
 
     pub fn timer_enable(&self, time_base : u64) {
 
-        let uart = Uart{p: UART0_BASE};
-        
         unsafe {
             
             ptr::write_volatile(&mut time_elapsed, 0);
