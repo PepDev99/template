@@ -2,6 +2,9 @@
 
 #![feature(abi_riscv_interrupt)]
 
-pub mod demo_system;
 
-pub mod timer;
+pub mod peripherals;
+
+mod interrupt;
+
+mod register;

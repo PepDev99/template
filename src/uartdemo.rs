@@ -4,7 +4,7 @@
 use core::panic::PanicInfo;
 use core::arch::global_asm;
 
-use drivers::demo_system;
+use drivers::peripherals;
 
 global_asm!(include_str!("startup.s"));
 
@@ -16,6 +16,8 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 pub extern "C" fn main() {
     
-    demo_system::puts("Hello World\n");
+    let serial = unsafe { peripherals::PERIPHERALS.take_serial() };
 
+    serial.puts("Hello World\n");
+    
 }

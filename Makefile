@@ -1,19 +1,28 @@
 ###############################################################################
 # Project Info
 
-PROJECT = main
-MCU = DEMOSYSTEM
-
 CARGO_TARGET = riscv32imc-unknown-none-elf
 CARGO_PROFILE = debug
 
 ###############################################################################
 
+
 ###############################################################################
 # Directories
 
-SRCS = 		$(wildcard src/*.rs) $(wildcard lib/*.rs)
-STARTUP = 	startup
+SRCDIR = src/
+SRCS = $(wildcard $(SRCDIR)*.rs)
+LIBS = $(wildcard lib/*.rs)
+
+BINDIR = bin/
+BINARIES = $(addprefix $(BINDIR), $(notdir $(SRCS:.rs=.bin)))
+
+PROJECTS = $(notdir $(SRCS:.rs=))
+
+STARTUP = startup
+
+###############################################################################
+
 
 ###############################################################################
 # Toolchain
@@ -24,26 +33,36 @@ OBJCOPY = 		$(RV_PREFIX)objcopy
 
 ###############################################################################
 
+
 ###############################################################################
 # Misc
 
-RM      = rm -rf 					# Remove recursively command
-MKDIR   = @mkdir -p $(@D) 			# Creates folders if not present
-CP      = @cp target/$(CARGO_TARGET)/$(CARGO_PROFILE)/$(PROJECT) $@
+RM      = rm -rf
+MKDIR   = @mkdir -p $@
+CP      = @cp $^ $@
 
 ###############################################################################
 
-all: bin/$(PROJECT).bin
 
-bin/$(PROJECT).elf: $(SRCS) src/$(STARTUP).s
-	@echo "\n[ELF]	Creating elf file"
-	$(MKDIR)
-	@cargo +nightly build --bin $(PROJECT)
+all: $(BINARIES)
+
+$(BINDIR)%.bin: $(BINDIR)%.elf
+	@echo "\n[ELF]	Creating bin file: $@"
+	$(OBJCOPY) -O binary $^ $@
+
+.PRECIOUS: $(BINDIR)%.elf
+$(BINDIR)%.elf: target/$(CARGO_TARGET)/$(CARGO_PROFILE)/% | $(BINDIR)
+	@echo "\n[ELF] Creating elf file: $@"
 	$(CP)
 
-bin/$(PROJECT).bin: bin/$(PROJECT).elf
-	@echo "\n[ELF]	Creating bin file"
-	$(OBJCOPY) -O binary bin/$(PROJECT).elf bin/$(PROJECT).bin
+$(BINDIR):
+	$(MKDIR)
+
+target/$(CARGO_TARGET)/$(CARGO_PROFILE)/%: $(SRCDIR)%.rs $(LIBS) src/$(STARTUP).s
+	@echo "\n[ELF]	Creating cargo elf file: $@"
+	@cargo +nightly build --bin $(notdir $@)
+
+$(PROJECTS): %: $(BINDIR)%.bin
 
 clean:
 	@cargo clean
@@ -51,7 +70,5 @@ clean:
 
 .PHONY: all clean
 
-dump:
-	$(OBJDUMP) -D bin/$(PROJECT).elf
-
-
+dump_%: $(BINDIR)%.elf
+	$(OBJDUMP) -D $(BINDIR)$(subst dump_,,$@).elf

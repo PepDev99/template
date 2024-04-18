@@ -11,13 +11,16 @@ name = "drivers"
 path = "lib/lib.rs"
 
 [[bin]]
-name = "main"
-path = "src/main.rs"
+name = "uartdemo"
+path = "src/uartdemo.rs"
+
+[[bin]]
+name = "gpiodemo"
+path = "src/gpiodemo.rs"
+
+[[bin]]
+name = "timerdemo"
+path = "src/timerdemo.rs"
 
 
 [dependencies]
-
-
-[features]
-
-sim_ctrl_output = []

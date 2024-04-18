@@ -1,58 +1,85 @@
 use core::ptr;
 
-pub const GPIO_OUT_REG : usize =  0x0;
-pub const GPIO_IN_REG : usize =  0x4;
-pub const GPIO_IN_DBNC_REG : usize =  0x8;
-pub const GPIO_OUT_SHIFT_REG : usize = 0xC;
+pub (crate) const GPIO_BASE: *mut u32 = 0x80000000 as *mut u32;
 
 const GPIO_OUT_MASK : usize = 0xF;
 
-pub type Gpio = *mut u32;
+pub struct Gpio {
+    pub (crate) p: *mut u32
+}
 
-pub fn set_outputs(gpio: Gpio, outputs: u32) {
+#[derive(Clone, Copy)]
+pub enum OffsetGpioReg {
+    OutReg = 0,
+    InReg = 1,
+    InDBNCReg = 2,
+    OutShiftReg = 3,
+}
+
+
+impl Gpio {
+
+    #[inline]
+    fn write_gpio(&self, offset : OffsetGpioReg, value: u32) {
     
-    unsafe {
-        ptr::write_volatile(gpio, outputs);
+        unsafe {
+            ptr::write_volatile(&mut *(self.p.add(offset as usize)), value);
+        }
+
     }
 
-}
+    #[inline]
+    fn read_gpio(&self, offset : OffsetGpioReg) -> u32 {
 
-pub fn read_gpio(gpio: Gpio) -> u32 {
-
-    unsafe {
-        return ptr::read_volatile(gpio);
-    }
+        unsafe {
+            ptr::read_volatile(&mut *(self.p.add(offset as usize)))
+        }
     
-}
-
-pub fn set_output_bit(gpio: Gpio, output_bit_index: u32, mut output_bit: u32) {
-
-    output_bit &= 1;
-
-    unsafe {
-
-        let mut output_bits : u32 = ptr::read_volatile(gpio);
-
-        output_bits &= !(1 << output_bit_index);
-
-        output_bits |= output_bit << output_bit_index;
-
-        set_outputs(gpio, output_bits);
     }
 
-}
+    #[inline]
+    fn write_gpio_bit(&self, offset : OffsetGpioReg, value_bit_index: u32, mut value_bit: u32) {
+        
+        value_bit &= 1;
 
-pub fn get_output_bit(gpio: Gpio, output_bit_index: u32) -> u32 {
+        let mut value_bits : u32 = self.read_gpio(offset);
 
-    unsafe {
+        value_bits &= !(1 << value_bit_index);
 
-        let mut output_bits : u32 = ptr::read_volatile(gpio);
+        value_bits |= value_bit << value_bit_index;
 
-        output_bits >>= output_bit_index;
+        self.write_gpio(offset, value_bits);
+    
+    }
 
-        output_bits &= 1;
+    #[inline]
+    fn read_gpio_bit(&self, offset : OffsetGpioReg, value_bit_index: u32) -> u32 {
 
-        return output_bits;
+        let mut value_bits : u32 = self.read_gpio(offset);
+
+        value_bits >>= value_bit_index;
+
+        value_bits &= 1;
+
+        value_bits
+    
+    }
+
+    pub fn set_output(&self, output : u32) {
+
+        self.write_gpio(OffsetGpioReg::OutReg, output);
+
+    }
+
+    pub fn set_output_bit(&self, output_bit_index : u32, output_bit : u32) {
+        
+        self.write_gpio_bit(OffsetGpioReg::OutReg, output_bit_index, output_bit);
+    
+    }
+
+    pub fn get_output_bit(&self, output_bit_index : u32) -> u32 {
+
+        self.read_gpio_bit(OffsetGpioReg::OutReg, output_bit_index)
 
     }
 
