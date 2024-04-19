@@ -9,7 +9,7 @@ pub struct Gpio {
 }
 
 #[derive(Clone, Copy)]
-pub enum OffsetGpioReg {
+enum OffsetGpioReg {
     OutReg = 0,
     InReg = 1,
     InDBNCReg = 2,

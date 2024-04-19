@@ -20,8 +20,8 @@ pub extern "C" fn main() {
     let timer = unsafe {peripherals::PERIPHERALS.take_timer()};
 
     let time_base : u64 = 4*10000;
-    let mut current_time : u64 = 0;
-    let mut elapsed_time : u64 = 0;
+    let current_time : u64;
+    let mut elapsed_time : u64;
 
     serial.puts("TIMER DEMO\n");
 
@@ -41,8 +41,8 @@ pub extern "C" fn main() {
     serial.putdec(elapsed_time as u32);
     serial.puts("\n\n\n");
 
-    let mut start_time : u64 = 0;
-    let mut end_time : u64 = 0;
+    let mut start_time : u64;
+    let mut end_time : u64;
 
     for _ in 0..10 {
 

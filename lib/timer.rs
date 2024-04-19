@@ -97,7 +97,7 @@ impl Timer {
     pub fn get_elapsed_time(&self) -> u64 {
     
         unsafe {
-            return ptr::read_volatile(&mut time_elapsed);
+            return ptr::read_volatile(ptr::addr_of_mut!(time_elapsed));
         }
 
     }   
@@ -106,7 +106,7 @@ impl Timer {
 
         unsafe {
             
-            ptr::write_volatile(&mut time_elapsed, 0);
+            ptr::write_volatile(ptr::addr_of_mut!(time_elapsed), 0);
             time_increment = time_base;
             self.increment_timecmp(time_base);
             enable_interrupts(TIMER_IRQ);
@@ -133,7 +133,7 @@ extern "riscv-interrupt-m" fn simple_timer_handler() {
 
         timer.increment_timecmp(time_increment);
     
-        ptr::write_volatile(&mut time_elapsed, time_elapsed + 1);
+        ptr::write_volatile(ptr::addr_of_mut!(time_elapsed), time_elapsed + 1);
     
     }
 
