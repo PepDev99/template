@@ -71,4 +71,4 @@ clean:
 .PHONY: all clean
 
 dump_%: $(BINDIR)%.elf
-	$(OBJDUMP) -D $(BINDIR)$(subst dump_,,$@).elf
+	$(OBJDUMP) -D $(BINDIR)$(subst dump_,,$@).elf > $(BINDIR)$@.txt

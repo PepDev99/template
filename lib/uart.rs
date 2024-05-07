@@ -1,6 +1,6 @@
 use crate::interrupt::{enable_interrupts,set_global_interrupt_enable};
 
-use core::ptr; 
+use core::ptr;
 
 pub (crate) const UART0_BASE: *mut u32 = 0x80001000 as *mut u32;
 
@@ -25,29 +25,31 @@ enum OffsetUartReg {
 
 impl Uart {
 
-    #[inline]
+    #[no_mangle]
+    #[inline(always)]
     fn write_uart(&self, offset : OffsetUartReg, value: u32 ) {
         
         unsafe {
 
             ptr::write_volatile(&mut *(self.p.add(offset as usize)), value);
-
+        
         }
 
     }
 
-    #[inline]
+    #[no_mangle]
+    #[inline(always)]
     fn read_uart(&self, offset : OffsetUartReg) -> u32 {
 
         unsafe {
             
             ptr::read_volatile(&mut *(self.p.add(offset as usize)))
-
+        
         }
 
     }
 
-
+    #[no_mangle]
     pub fn uart_enable_rx_int(){
     
         unsafe {
@@ -57,6 +59,7 @@ impl Uart {
     
     }
 
+    #[no_mangle]
     pub fn uart_in(&self) -> i32 {
     
         let mut res : i32 = UART_EOF;
@@ -69,6 +72,7 @@ impl Uart {
 
     }
 
+    #[no_mangle]
     pub fn uart_out(&self, c : u8) {
 
         while (self.read_uart(OffsetUartReg::StatusReg) & UART_STATUS_TX_FULL) != 0  {
@@ -79,6 +83,7 @@ impl Uart {
     
     }
 
+    #[no_mangle]
     pub fn putchar(&self, c : i32) -> i32 {
     
         if (c as u8) == b'\n' {
@@ -93,14 +98,14 @@ impl Uart {
     
     }
 
+    #[no_mangle]
     pub fn getchar(&self) -> i32 {
     
         self.uart_in()
 
-    
     }
 
-
+    #[no_mangle]
     pub fn puts(&self, str: &str) -> i32 {
 
         for c in str.bytes() {
@@ -110,6 +115,7 @@ impl Uart {
         0
     }
 
+    #[no_mangle]
     pub fn puthex(&self, mut h: u32) {
 
         let mut cur_digit: i32;
@@ -135,6 +141,7 @@ impl Uart {
     
     }
 
+    #[no_mangle]
     pub fn putbyte(&self, h: u32) {
     
         let mut cur_digit: i32;
@@ -167,7 +174,7 @@ impl Uart {
     
     }
 
-
+    #[no_mangle]
     pub fn putdec(&self, n: u32) {
 
         if n > 9 {

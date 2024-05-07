@@ -23,30 +23,34 @@ static mut time_elapsed: u64 = 0;
 
 static mut time_increment : u64 = 0;
 
+
 impl Timer {
 
-    #[inline]
+    #[no_mangle]
+    #[inline(always)]
     fn write_timer(&self, offset : OffsetTimerReg, value: u32 ) {
         
         unsafe {
 
             ptr::write_volatile(&mut *(self.p.add(offset as usize)), value);
-
+            
         }
 
     }
 
-    #[inline]
+    #[no_mangle]
+    #[inline(always)]
     fn read_timer(&self, offset : OffsetTimerReg) -> u32 {
 
         unsafe {
             
             ptr::read_volatile(&mut *(self.p.add(offset as usize)))
-
+        
         }
 
     }
 
+    #[no_mangle]
     fn timecmp_update(&self, new_time : u64) {
 
         self.write_timer(OffsetTimerReg::MTimeCmpReg, u32::MAX);
@@ -55,7 +59,8 @@ impl Timer {
         
     }
 
-    #[inline]
+    #[no_mangle]
+    #[inline(always)]
     fn increment_timecmp(&self, time_base : u64) {
 
         let mut current_time : u64 = self.timer_read();
@@ -66,6 +71,7 @@ impl Timer {
 
     }
 
+    #[no_mangle]
     pub fn timer_init(&self) {
     
         unsafe {
@@ -74,6 +80,7 @@ impl Timer {
 
     }   
 
+    #[no_mangle]
     pub fn timer_read(&self) -> u64 {
 
         let mut current_timeh : u32;
@@ -94,14 +101,18 @@ impl Timer {
     
     }
 
+    #[no_mangle]
     pub fn get_elapsed_time(&self) -> u64 {
     
         unsafe {
-            return ptr::read_volatile(ptr::addr_of_mut!(time_elapsed));
+            
+            ptr::read_volatile(ptr::addr_of_mut!(time_elapsed))
+            
         }
 
     }   
 
+    #[no_mangle]
     pub fn timer_enable(&self, time_base : u64) {
 
         unsafe {
@@ -116,6 +127,7 @@ impl Timer {
 
     }
 
+    #[no_mangle]
     pub fn timer_disable(&self) {
 
         unsafe {
@@ -134,7 +146,7 @@ extern "riscv-interrupt-m" fn simple_timer_handler() {
         timer.increment_timecmp(time_increment);
     
         ptr::write_volatile(ptr::addr_of_mut!(time_elapsed), time_elapsed + 1);
-    
+        
     }
 
 }

@@ -19,25 +19,29 @@ enum OffsetGpioReg {
 
 impl Gpio {
 
-    #[inline]
+    #[inline(always)]
     fn write_gpio(&self, offset : OffsetGpioReg, value: u32) {
     
         unsafe {
+            
             ptr::write_volatile(&mut *(self.p.add(offset as usize)), value);
+            
         }
 
     }
 
-    #[inline]
+    #[inline(always)]
     fn read_gpio(&self, offset : OffsetGpioReg) -> u32 {
 
         unsafe {
+            
             ptr::read_volatile(&mut *(self.p.add(offset as usize)))
+            
         }
     
     }
 
-    #[inline]
+    #[inline(always)]
     fn write_gpio_bit(&self, offset : OffsetGpioReg, value_bit_index: u32, mut value_bit: u32) {
         
         value_bit &= 1;
@@ -52,7 +56,7 @@ impl Gpio {
     
     }
 
-    #[inline]
+    #[inline(always)]
     fn read_gpio_bit(&self, offset : OffsetGpioReg, value_bit_index: u32) -> u32 {
 
         let mut value_bits : u32 = self.read_gpio(offset);

@@ -11,6 +11,7 @@ pub struct Peripherals {
 
 impl Peripherals {
     
+    #[no_mangle]
     pub unsafe fn take_serial(&mut self) -> uart::Uart {
 
         let p = replace(&mut self.serial, None);
@@ -18,12 +19,14 @@ impl Peripherals {
 
     }
 
+    #[no_mangle]
     pub unsafe fn take_gpio(&mut self) -> gpio::Gpio {
 
         let p = replace(&mut self.gpio, None);
         p.unwrap()
     }
 
+    #[no_mangle]
     pub unsafe fn take_timer(&mut self) -> timer::Timer {
 
         let p = replace(&mut self.timer, None);

@@ -7,6 +7,7 @@ extern "C" {
     
 }
 
+#[no_mangle]
 pub unsafe fn install_exception_handler(vector_num : u32, handler_fn : extern "riscv-interrupt-m" fn()) -> u32 {
 
     let exc_vectors: *const u32 = &_vectors_start;

@@ -5,6 +5,6 @@
 
 pub mod peripherals;
 
-mod interrupt;
+pub mod interrupt;
 
-mod register;
+pub mod register;

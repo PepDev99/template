@@ -19,7 +19,7 @@ pub extern "C" fn main() {
     let serial = unsafe {peripherals::PERIPHERALS.take_serial() };
     let timer = unsafe {peripherals::PERIPHERALS.take_timer()};
 
-    let time_base : u64 = 4*10000;
+    let time_base : u64 = 4*100000;
     let current_time : u64;
     let mut elapsed_time : u64;
 
@@ -44,11 +44,15 @@ pub extern "C" fn main() {
     let mut start_time : u64;
     let mut end_time : u64;
 
-    for _ in 0..10 {
+    let mut i = 0;
+    while i < 10 {
 
         start_time = timer.timer_read();
 
-        for _ in 0..10 {}
+        let mut j = 0;
+        while j < 10 {
+            j = j + 1;
+        }
 
         end_time = timer.timer_read();
         elapsed_time = end_time - start_time;
@@ -62,6 +66,8 @@ pub extern "C" fn main() {
         serial.puts("end time: ");
         serial.putdec(end_time as u32);
         serial.puts("\n");
+
+        i = i + 1;
     
     }
 
