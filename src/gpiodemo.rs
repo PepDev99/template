@@ -4,7 +4,7 @@
 use core::panic::PanicInfo;
 use core::arch::global_asm;
 
-use drivers::peripherals;
+use riscv_demosystem::peripherals;
 
 global_asm!(include_str!("startup.s"));
 
@@ -14,7 +14,7 @@ fn panic(_info: &PanicInfo) -> ! {
 }
 
 #[no_mangle]
-pub extern "C" fn main() {
+extern "C" fn main() {
 
     let serial = unsafe {peripherals::PERIPHERALS.take_serial() };
     let gpio = unsafe { peripherals::PERIPHERALS.take_gpio() };

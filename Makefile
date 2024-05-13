@@ -12,7 +12,7 @@ CARGO_PROFILE = debug
 
 SRCDIR = src/
 SRCS = $(wildcard $(SRCDIR)*.rs)
-LIBS = $(wildcard lib/*.rs)
+LIBS = $(wildcard lib/*.rs) $(wildcard lib/peripherals/*.rs)
 
 BINDIR = bin/
 BINARIES = $(addprefix $(BINDIR), $(notdir $(SRCS:.rs=.bin)))

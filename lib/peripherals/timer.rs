@@ -51,6 +51,7 @@ impl Timer {
     }
 
     #[no_mangle]
+    #[inline(always)]
     fn timecmp_update(&self, new_time : u64) {
 
         self.write_timer(OffsetTimerReg::MTimeCmpReg, u32::MAX);

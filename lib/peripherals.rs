@@ -1,6 +1,6 @@
-#[path = "./uart.rs" ] mod uart;
-#[path = "./gpio.rs" ] mod gpio;
-#[path = "./timer.rs" ] mod timer;
+mod uart;
+mod gpio;
+mod timer;
 
 use core::ptr::replace;
 pub struct Peripherals {

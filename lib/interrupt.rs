@@ -3,6 +3,7 @@ use core::ptr;
 use core::arch::asm;
 
 extern "C" {
+    
     static _vectors_start: u32;
     
 }

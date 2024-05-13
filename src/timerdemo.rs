@@ -4,7 +4,7 @@
 use core::panic::PanicInfo;
 use core::arch::global_asm;
 
-use drivers::peripherals;
+use riscv_demosystem::peripherals;
 
 global_asm!(include_str!("startup.s"));
 
@@ -14,12 +14,12 @@ fn panic(_info: &PanicInfo) -> ! {
 }
 
 #[no_mangle]
-pub extern "C" fn main() {
+extern "C" fn main() {
 
     let serial = unsafe {peripherals::PERIPHERALS.take_serial() };
     let timer = unsafe {peripherals::PERIPHERALS.take_timer()};
 
-    let time_base : u64 = 4*100000;
+    let time_base : u64 = 4*1000;
     let current_time : u64;
     let mut elapsed_time : u64;
 
